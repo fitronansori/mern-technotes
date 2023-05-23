@@ -40,6 +40,8 @@ app.use("/", express.static(path.join(__dirname, "public")));
 
 // import router dari file root.js di folder routes untuk menangani request ke root
 app.use("/", require("./routes/root"));
+// import router dari file userRoutes.js di folder routes untuk menangani request ke /users
+app.use("/users", require("./routes/userRoutes"));
 
 // all method untuk menangani semua request yang masuk ke server kita yang tidak terdefinisi diatas
 app.all("*", (req, res) => {
@@ -68,7 +70,7 @@ mongoose.connection.once("open", () => {
 // error handler untuk menghandle error yang terjadi pada MongoDB
 mongoose.connection.on("error", (err) => {
   logEvents(
-    `${err.no}: ${err.code} | ${err.sycall} | ${err.hostname}`,
+    `${err.no}: ${err.code} | ${err.syscall} | ${err.hostname}`,
     "mongoErrLog.log"
   );
   console.error(err);

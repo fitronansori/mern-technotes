@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
     // gunakan method connect dari mongoose untuk menghubungkan ke MongoDB
-    await mongoose.connect(process.env.DATABASE_URI);
+    mongoose.connect(process.env.DATABASE_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: "techNotesDB",
+    });
   } catch (err) {
     console.error(err);
     process.exit(1); // exit dengan status 1 (error)
