@@ -6,16 +6,22 @@ const app = express();
 // import path untuk mengakses file di folder server
 const path = require("path");
 // import custom middleware logger
-const { logger } = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 const { errorHandler } = require("./middleware/errorHandler");
 // import 3rd party middleware
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 // import cors options
 const corsOptions = require("./config/corsOptions");
+// import DBConnection untuk menghubungkan ke database
+const connectDB = require("./config/DBConnection");
+const { default: mongoose } = require("mongoose");
 
 // port yang akan kita gunakan untuk mengakses server
 const port = process.env.PORT || 5000;
+
+// connect ke database menggunakan fungsi connectDB yang telah kita buat
+connectDB();
 
 // gunakan logger middleware
 app.use(logger);
@@ -50,7 +56,20 @@ app.all("*", (req, res) => {
 // gunakan error handler middleware, ada dibawah karena error handler adalah middleware terakhir yang akan kita gunakan
 app.use(errorHandler);
 
-// listen method untuk menjalankan server pada port yang telah ditentukan
-app.listen(port, () => {
-  console.log(`Server Running at ${port}`);
+// connect method untuk menghubungkan server kita ke MongoDB
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+  // listen method untuk menjalankan server pada port yang telah ditentukan
+  app.listen(port, () => {
+    console.log(`Server Running at ${port}`);
+  });
+});
+
+// error handler untuk menghandle error yang terjadi pada MongoDB
+mongoose.connection.on("error", (err) => {
+  logEvents(
+    `${err.no}: ${err.code} | ${err.sycall} | ${err.hostname}`,
+    "mongoErrLog.log"
+  );
+  console.error(err);
 });
