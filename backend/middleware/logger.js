@@ -36,6 +36,7 @@ const logEvents = async (message, logFileName) => {
 const logger = (req, res, next) => {
   // Log the request method and URL
   logEvents(`${req.method} ${req.url}`, "requests.log");
+  // Call the next middleware function in the pipeline
   next();
 };
 

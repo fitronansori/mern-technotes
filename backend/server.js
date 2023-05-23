@@ -1,3 +1,5 @@
+// Gunakan module dotenv untuk mengakses process.env
+require("dotenv").config();
 const express = require("express");
 // app adalah instance dari express yang akan kita gunakan untuk membuat server
 const app = express();
@@ -24,7 +26,7 @@ app.use(cors(corsOptions));
 // json middleware untuk mengakses request body yang dikirimkan oleh client dalam bentuk json
 app.use(express.json());
 
-// cookie parser middleware untuk mengakses cookie yang dikirimkan oleh client dalam bentuk json
+// cookie parser middleware untuk mengakses cookie yang dikirimkan oleh client dalam bentuk json atau string biasa (tergantung dari client).
 app.use(cookieParser());
 
 // static middleware untuk mengakses file di folder public dari client
