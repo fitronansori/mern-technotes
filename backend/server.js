@@ -42,6 +42,8 @@ app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", require("./routes/root"));
 // import router dari file userRoutes.js di folder routes untuk menangani request ke /users
 app.use("/users", require("./routes/userRoutes"));
+// import router dari file noteRoutes.js di folder routes untuk menangani request ke /notes
+app.use("/notes", require("./routes/noteRoutes"));
 
 // all method untuk menangani semua request yang masuk ke server kita yang tidak terdefinisi diatas
 app.all("*", (req, res) => {

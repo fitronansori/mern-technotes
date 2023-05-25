@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const noteSchema = new mongoose.Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId, // tipe data ObjectId dari mongoose untuk mereferensikan ke user lain
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User", // mereferensikan ke model User yang telah kita buat sebelumnya
+      ref: "User",
     },
     title: {
       type: String,
@@ -14,23 +13,38 @@ const noteSchema = new mongoose.Schema(
     },
     text: {
       type: String,
-      required: false,
+      required: true,
     },
     completed: {
       type: Boolean,
       default: false,
     },
+    sequenceId: {
+      type: Number,
+      unique: true,
+    },
   },
   {
-    // timestamps akan membuat mongoose secara otomatis menambahkan field createdAt dan updatedAt pada setiap document yang tersimpan
     timestamps: true,
   }
 );
 
-noteSchema.plugin(AutoIncrement, {
-  inc_field: "ticket",
-  id: "tikcetNums",
-  start_seq: 500,
+// mongoose seqeuence manually
+
+noteSchema.pre("save", async function (next) {
+  const note = this;
+
+  if (!note.sequenceId) {
+    const lastNote = await Note.findOne({}, {}, { sort: { sequenceId: -1 } });
+
+    if (lastNote) {
+      note.sequenceId = lastNote.sequenceId + 1;
+    } else {
+      note.sequenceId = 1;
+    }
+  }
+
+  next();
 });
 
 const Note = mongoose.model("Note", noteSchema);
