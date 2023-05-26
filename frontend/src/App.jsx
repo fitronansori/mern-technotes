@@ -1,9 +1,14 @@
+import { Outlet } from "react-router-dom";
+// import Public from "./components/Public";
+
 function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <main>
+      {/* <Public /> */}
+      <Outlet />
+    </main>
   );
 }
 
-export default App;
+// export App menjadi Root
+export { App };
