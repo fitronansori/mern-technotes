@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-// import App menjadi Root
-import { App as Root } from "./App.jsx";
+import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -15,7 +14,7 @@ import UsersList from "./features/users/UsersList";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <App />,
     children: [
       {
         index: true,
