@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import ApiSlice from "../api/apiSlice";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,8 @@ const store = configureStore({
   // We want to use Redux DevTools in development.
   devTools: true,
 });
+
+setupListeners(store.dispatch);
 
 export default store;
 
