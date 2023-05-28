@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSelector, createEntityAdapter } from "@reduxjs/toolkit";
 import apiSlice from "../../app/api/apiSlice";
 
@@ -13,14 +14,11 @@ const initialState = notesAdapter.getInitialState();
 // Create a notesApiSlice by injecting endpoints
 export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // Create a getNotes query endpoint
     getNotes: builder.query({
       query: () => "/notes",
       validateStatus: (response, result) => {
         return response.status === 200 && !result.isError;
       },
-      keepUnusedDataFor: 5,
-      // Transform the response from the server to be compatible with the note entity adapter
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
           note.id = note._id;
@@ -28,8 +26,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         });
         return notesAdapter.setAll(initialState, loadedNotes);
       },
-      // Provide tags for the query result
-      providesTags: (result) => {
+      providesTags: (result, error, arg) => {
         if (result?.ids) {
           return [
             { type: "Note", id: "LIST" },
@@ -38,11 +35,43 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: "Note", id: "LIST" }];
       },
     }),
+    addNewNote: builder.mutation({
+      query: (initialNote) => ({
+        url: "/notes",
+        method: "POST",
+        body: {
+          ...initialNote,
+        },
+      }),
+      invalidatesTags: [{ type: "Note", id: "LIST" }],
+    }),
+    updateNote: builder.mutation({
+      query: (initialNote) => ({
+        url: "/notes",
+        method: "PATCH",
+        body: {
+          ...initialNote,
+        },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
+    }),
+    deleteNote: builder.mutation({
+      query: ({ id }) => ({
+        url: `/notes`,
+        method: "DELETE",
+        body: { id },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
+    }),
   }),
 });
 
-// Export the getNotes query hook
-export const { useGetNotesQuery } = notesApiSlice;
+export const {
+  useGetNotesQuery,
+  useAddNewNoteMutation,
+  useUpdateNoteMutation,
+  useDeleteNoteMutation,
+} = notesApiSlice;
 
 // returns the query result object
 export const selectNotesResult = notesApiSlice.endpoints.getNotes.select();
