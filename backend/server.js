@@ -40,6 +40,8 @@ app.use("/", express.static(path.join(__dirname, "public")));
 
 // import router dari file root.js di folder routes untuk menangani request ke root
 app.use("/", require("./routes/root"));
+// import router dari file authRoutes.js di folder routes untuk menangani request ke /auth
+app.use("/auth", require("./routes/authRoutes"));
 // import router dari file userRoutes.js di folder routes untuk menangani request ke /users
 app.use("/users", require("./routes/userRoutes"));
 // import router dari file noteRoutes.js di folder routes untuk menangani request ke /notes
